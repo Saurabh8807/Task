@@ -56,7 +56,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
           .status(201)
           .cookie("accessToken", accessToken, options)
           .cookie("refreshToken", refreshToken, options)    
-          .json({ user: { id: createdUser._id, username: createdUser.username, email: createdUser.email, profilePicUrl,contact:user.contact }, message: "User registered successfully" });
+          .json({ user: { id: createdUser._id, username: createdUser.username, email: createdUser.email, profilePic: profilePicUrl,contact:user.contact }, message: "User registered successfully" });
   } catch (error: any) {
       console.error("Error registering user:", error);
       return res.status(500).json({ message: "Internal server error", error: error.message });

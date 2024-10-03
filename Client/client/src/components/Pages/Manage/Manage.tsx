@@ -112,7 +112,7 @@ const Manage: React.FC = () => {
   const doneTasks = tasks.filter((task) => task.stage === 3);
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md">
+    <div className="bg-white p-8 min-h-screen rounded-lg shadow-md">
       <ToastContainer /> {/* Add ToastContainer to render toasts */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-700">Manage Tasks</h1>

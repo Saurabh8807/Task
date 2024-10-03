@@ -16,10 +16,13 @@ const SignUp: React.FC = () => {
     email: '',
     contact: '',
     password: '',
+    confirmPassword: '',
     profilePic: null as File | null,
   });
 
-  const [formError, setFormError] = useState<string | null>(null); 
+  const [formError, setFormError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // To toggle confirm password visibility
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -38,9 +41,13 @@ const SignUp: React.FC = () => {
   };
 
   const validateForm = () => {
-    const { username, email, contact, password } = formData;
-    if (!username || !email || !contact || !password) {
+    const { username, email, contact, password, confirmPassword } = formData;
+    if (!username || !email || !contact || !password || !confirmPassword) {
       setFormError('Please fill in all fields.'); 
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setFormError('Passwords do not match.'); 
       return false;
     }
     setFormError(null); 
@@ -126,7 +133,7 @@ const SignUp: React.FC = () => {
           </div>
           <div className="mb-4">
             <input 
-              type="password" 
+              type={showPassword ? "text" : "password"} // Toggle password visibility
               name="password" 
               value={formData.password} 
               onChange={handleInputChange} 
@@ -134,6 +141,31 @@ const SignUp: React.FC = () => {
               required 
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)} 
+              className="text-black"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+          <div className="mb-4">
+            <input 
+              type={showConfirmPassword ? "text" : "password"} // Toggle confirm password visibility
+              name="confirmPassword" 
+              value={formData.confirmPassword} 
+              onChange={handleInputChange} 
+              placeholder="Confirm Password" 
+              required 
+              className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button 
+              type="button" 
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+              className="text-black"
+            >
+              {showConfirmPassword ? "Hide" : "Show"}
+            </button>
           </div>
           <div className="mb-4">
             <input 

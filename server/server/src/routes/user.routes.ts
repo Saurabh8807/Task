@@ -11,14 +11,14 @@ import { upload } from "../middleware/multer.middleware";
 const router = Router();
 
 
-router.get("/", getAllUsers); 
+// router.get("/", getAllUsers); 
 
-router.get("/:id", getUserById); 
+router.get("/:id",verifyJwt, getUserById); 
 
-router.put("/:id", upload.fields([
+router.put("/:id",verifyJwt, upload.fields([
     { name: "profilePic", maxCount: 1 },   
   ]), updateUserById); 
 
-router.delete("/:id", deleteUserById); 
+router.delete("/:id",verifyJwt, deleteUserById); 
 
 export default router;

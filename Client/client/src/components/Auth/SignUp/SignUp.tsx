@@ -50,9 +50,8 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(setLoading(true));
-    dispatch(setError(null)); // Clear previous errors
+    dispatch(setError(null)); 
 
-    // Validate the form before submission
     if (!validateForm()) {
       dispatch(setLoading(false)); // Stop loading if validation fails
       return; // Exit if validation fails

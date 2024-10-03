@@ -25,8 +25,9 @@ const taskSchema: Schema = new Schema({
         ref: "User", 
     },
     priority: {
-        type: String,
-        enum: ["Low", "Medium", "High"], 
+        type: Number,
+        enum: [0, 1, 2], 
+        required:true
     },
     deadline: {
         type: Date,

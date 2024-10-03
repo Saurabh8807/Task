@@ -55,15 +55,12 @@ export const updateUserById = async (req: Request, res: Response): Promise<any> 
             const avatarLocalPath = files?.profilePic ? files.profilePic[0] : null;
 
             if (avatarLocalPath) {
-                const avatar = await uploadOnCloudinary(avatarLocalPath.path); // Assuming this function uploads to Cloudinary and returns the URL
+                const avatar = await uploadOnCloudinary(avatarLocalPath.path); 
                 const profilePicUrl: string | undefined = avatar?.url;
 
-                // Only update profilePicUrl if a new picture is provided
                 updatedData.profilePicUrl = profilePicUrl;
             }
         }
-
-        // Optionally, handle incoming refresh token (if needed)
         const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
         if (incomingRefreshToken) {
             updatedData.refreshToken = incomingRefreshToken;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from './redux/store'; // Adjust the import according to your store setup
+import { RootState } from './redux/store'; 
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

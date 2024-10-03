@@ -12,7 +12,7 @@ const AppLayout: React.FC = () => {
 
   return (
     <div className="app">
-      {isLoggedIn && <Navbar />} 
+      { isLoggedIn&& <Navbar />} 
       <Outlet />  
       {isLoggedIn && <Footer />}
     </div>

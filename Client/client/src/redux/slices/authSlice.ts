@@ -9,7 +9,7 @@ interface User {
 }
 
 interface AuthState {
-  user: User | null; // Directly represent the user object here
+  user: User | null; 
   isLoggedIn: boolean;
   loading: boolean;
   error: string | null;

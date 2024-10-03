@@ -41,7 +41,7 @@ axiosInstance.interceptors.response.use(
         Cookies.set('accessToken', newAccessToken);
 
         // Optionally, dispatch the user to Redux if needed
-        store.dispatch(setUser({ user: store.getState().auth.user}));
+        // store.dispatch(setUser({ user: store.getState().auth.user}));
 
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axios(originalRequest);

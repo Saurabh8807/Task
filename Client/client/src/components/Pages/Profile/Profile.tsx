@@ -4,11 +4,13 @@ import { RootState } from '../../../redux/store';
 import { FaUserEdit } from 'react-icons/fa';
 import axios from '../../../axios'; 
 import { updateUserProfile, User } from '../../../redux/slices/authSlice'; 
+import TaskShimmer from '../../Shimmer/Shimmer'
 
 const ProfilePage: React.FC = () => {
   const dispatch = useDispatch();
   const user: User | any  = useSelector((state: RootState) => state.auth.user);
-  
+  const [errorMessage, setErrorMessage] = useState(''); 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     username: user?.username || '',
@@ -18,6 +20,7 @@ const ProfilePage: React.FC = () => {
   });
 
   const toggleModal = () => {
+    setErrorMessage('')
     setIsModalOpen(!isModalOpen);
     if (!isModalOpen) {
       setFormData({
@@ -79,13 +82,16 @@ const ProfilePage: React.FC = () => {
         }));
         toggleModal(); 
       }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message || 'Error updating profile');
+      } else {
+        setErrorMessage('An error occurred while updating the profile. Please try again.');
+      }    }
   };
 
   if (!user) {
-    return <div className="text-center text-lg font-semibold">Loading...</div>;
+    return <div className="text-center text-lg font-semibold"><TaskShimmer/></div>;
   }
 
   return (
@@ -100,17 +106,14 @@ const ProfilePage: React.FC = () => {
           />
         </div>
 
-        {/* User Information */}
         <div className="mt-6 text-center">
           <h1 className="text-3xl font-bold text-gray-800">{user.username}</h1>
           <p className="text-lg text-gray-500">{user.email}</p>
           <p className="mt-2 text-sm text-gray-600">Contact: {user.contact}</p>
         </div>
 
-        {/* Divider */}
         <div className="my-6 border-t border-gray-200"></div>
 
-        {/* Centered Edit Profile Button */}
         <div className="flex justify-center mt-6">
           <button
             onClick={toggleModal}
@@ -148,7 +151,6 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
 
-                {/* Username */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Username</label>
                   <input
@@ -160,7 +162,6 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
 
-                {/* Email */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Email</label>
                   <input
@@ -172,7 +173,6 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
 
-                {/* Contact */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Contact</label>
                   <input
@@ -183,7 +183,11 @@ const ProfilePage: React.FC = () => {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   />
                 </div>
-
+                {errorMessage && (
+                <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md text-center">
+                  {errorMessage}
+                </div>
+              )}
                 {/* Submit Button */}
                 <div className="flex justify-center mt-6">
                   <button

@@ -17,6 +17,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
   const [name, setName] = useState('');
   const [priority, setPriority] = useState<number | ''>('');
   const [deadline, setDeadline] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [priorityError, setPriorityError] = useState('');
+  const [deadlineError, setDeadlineError] = useState('');
 
   useEffect(() => {
     if (task) {
@@ -32,17 +35,54 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
     setName('');
     setPriority('');
     setDeadline('');
+    setNameError('');
+    setPriorityError('');
+    setDeadlineError('');
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    setNameError('');
+    setPriorityError('');
+    setDeadlineError('');
+
+    if (!name.trim()) {
+      setNameError('Task name is required.');
+      isValid = false;
+    } else if (/[^a-zA-Z0-9 ]/.test(name)) {
+      setNameError('Task name must be alphanumeric without special characters.');
+      isValid = false;
+    }
+
+    if (priority === '') {
+      setPriorityError('Priority is required.');
+      isValid = false;
+    }
+
+    if (!deadline) {
+      setDeadlineError('Deadline is required.');
+      isValid = false;
+    } else {
+      const selectedDate = new Date(deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); 
+      if (selectedDate <= today) {
+        setDeadlineError('Deadline must be greater than today.');
+        isValid = false;
+      }
+    }
+
+    return isValid;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name && priority !== '' && deadline) { 
-      onSubmit({ name, priority, deadline });
-      toast.success('Task submitted successfully!'); 
+    if (validateForm()) {
+      onSubmit({ name, priority: Number(priority), deadline });
       resetForm();
-      onClose(); 
+      onClose();
     } else {
-      toast.error('Please fill in all fields.'); 
+      toast.error('Please correct the errors in the form.');
     }
   };
 
@@ -59,24 +99,24 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+              className={`w-full border ${nameError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
               placeholder="Enter task name"
-              required
             />
+            {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
           </div>
           <div className="mb-6">
             <label className="block mb-2 font-medium text-gray-700">Priority</label>
             <select
               value={priority === '' ? '' : priority} 
               onChange={(e) => setPriority(Number(e.target.value))} 
-              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-              required
+              className={`w-full border ${priorityError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
             >
               <option value="">Select Priority</option>
               <option value="0">Low</option>
               <option value="1">Medium</option>
               <option value="2">High</option>
             </select>
+            {priorityError && <p className="text-red-500 text-sm mt-1">{priorityError}</p>}
           </div>
           <div className="mb-6">
             <label className="block mb-2 font-medium text-gray-700">Deadline</label>
@@ -84,9 +124,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-              required
+              className={`w-full border ${deadlineError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
             />
+            {deadlineError && <p className="text-red-500 text-sm mt-1">{deadlineError}</p>}
           </div>
           <div className="flex justify-end">
             <button

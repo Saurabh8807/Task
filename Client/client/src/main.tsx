@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider,Navigate } from 'react-router-dom';
 import AppLayout from './AppLayout'; 
 import Shimmer from './components/Shimmer/Shimmer';
 import './index.css';
@@ -15,6 +15,7 @@ const SignIn = lazy(() => import('./components/Auth/SignIn/SignIn'));
 const SignUp = lazy(() => import('./components/Auth/SignUp/SignUp'));
 const Profile = lazy(() => import('./components/Pages/Profile/Profile'));
 
+// const Navigate = useNavigate()
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -73,7 +74,11 @@ const appRouter = createBrowserRouter([
               <Shimmer />
           </Suspense>
         ),
-      }
+      },
+      {
+        path: '*',
+        element: <Navigate to="/" replace />,
+      },
     ],
   },
 ]);

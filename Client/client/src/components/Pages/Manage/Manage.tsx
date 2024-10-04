@@ -78,9 +78,10 @@ const Manage: React.FC = () => {
   const handleDeleteTask = async (id: string) => {
     try {
       const response = await axios.delete(`/task/${id}`);
+      console.log("tasks deleted")
+      fetchTasks();
       if (response.status === 200) {
         toast.success('Task deleted successfully');
-        fetchTasks();
       }
     } catch (error: any) {
       console.error('Error deleting task:', error);

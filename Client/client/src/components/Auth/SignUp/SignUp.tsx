@@ -20,7 +20,14 @@ const SignUp: React.FC = () => {
     profilePic: null as File | null,
   });
 
-  const [formError, setFormError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState({
+    username: '',
+    email: '',
+    contact: '',
+    password: '',
+    confirmPassword: ''
+  });
+
   const [showPassword, setShowPassword] = useState(false); 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
@@ -29,6 +36,7 @@ const SignUp: React.FC = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setFormErrors({ ...formErrors, [e.target.name]: '' });  // Clear the error for the field
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,22 +50,58 @@ const SignUp: React.FC = () => {
 
   const validateForm = () => {
     const { username, email, contact, password, confirmPassword } = formData;
-    if (!username || !email || !password || !confirmPassword) {
-      setFormError('Please fill in all fields.'); 
-      return false;
+    let errors = { username: '', email: '', contact: '', password: '', confirmPassword: '' };
+    let isValid = true;
+
+    // Username validation (only letters and numbers, no special characters)
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!username) {
+      errors.username = 'Username is required.';
+      isValid = false;
+    } else if (!usernameRegex.test(username)) {
+      errors.username = 'Username must contain only letters and numbers.';
+      isValid = false;
     }
-  const contactRegex = /^\d{10}$/;
-  
-  if (!contactRegex.test(contact)) {
-    setFormError('Contact number must be exactly 10 digits.');
-    return false;
-  }
-    if (password !== confirmPassword) {
-      setFormError('Passwords do not match.'); 
-      return false;
+
+    // Email validation (simple pattern check)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      errors.email = 'Email is required.';
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      errors.email = 'Enter a valid email.';
+      isValid = false;
     }
-    setFormError(null); 
-    return true;
+
+    // Contact validation (exactly 10 digits)
+    const contactRegex = /^\d{10}$/;
+    if (!contact) {
+      errors.contact = 'Contact number is required.';
+      isValid = false;
+    } else if (!contactRegex.test(contact)) {
+      errors.contact = 'Contact number must be exactly 10 digits.';
+      isValid = false;
+    }
+
+    // Password validation (password and confirm password must match)
+    if (!password) {
+      errors.password = 'Password is required.';
+      isValid = false;
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters.';
+      isValid = false;
+    }
+
+    if (!confirmPassword) {
+      errors.confirmPassword = 'Confirm password is required.';
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match.';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -82,14 +126,11 @@ const SignUp: React.FC = () => {
 
     try {
       const response = await axios.post('/auth/register', registrationData);
-      console.log(registrationData);
-      console.log(response);
       dispatch(setUser({ user: response.data.user }));
       navigate('../dashboard');
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'An error occurred during registration.';
       dispatch(setError(errorMessage));
-      setFormError(errorMessage);
     } finally {
       dispatch(setLoading(false));
     }
@@ -111,9 +152,9 @@ const SignUp: React.FC = () => {
               value={formData.username} 
               onChange={handleInputChange} 
               placeholder="Username" 
-               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {formErrors.username && <span className="text-red-500">{formErrors.username}</span>}
           </div>
           <div className="mb-4">
             <input 
@@ -122,9 +163,9 @@ const SignUp: React.FC = () => {
               value={formData.email} 
               onChange={handleInputChange} 
               placeholder="Email" 
-               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
           </div>
           <div className="mb-4">
             <input 
@@ -133,9 +174,9 @@ const SignUp: React.FC = () => {
               value={formData.contact} 
               onChange={handleInputChange} 
               placeholder="Contact" 
-               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {formErrors.contact && <span className="text-red-500">{formErrors.contact}</span>}
           </div>
           <div className="mb-4">
             <input 
@@ -144,7 +185,6 @@ const SignUp: React.FC = () => {
               value={formData.password} 
               onChange={handleInputChange} 
               placeholder="Password" 
-               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button 
@@ -154,6 +194,7 @@ const SignUp: React.FC = () => {
             >
               {showPassword ? "Hide" : "Show"}
             </button>
+            {formErrors.password && <span className="text-red-500">{formErrors.password}</span>}
           </div>
           <div className="mb-4">
             <input 
@@ -162,7 +203,6 @@ const SignUp: React.FC = () => {
               value={formData.confirmPassword} 
               onChange={handleInputChange} 
               placeholder="Confirm Password" 
-               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button 
@@ -172,6 +212,7 @@ const SignUp: React.FC = () => {
             >
               {showConfirmPassword ? "Hide" : "Show"}
             </button>
+            {formErrors.confirmPassword && <span className="text-red-500">{formErrors.confirmPassword}</span>}
           </div>
           <div className="mb-4">
             <input 
@@ -184,17 +225,15 @@ const SignUp: React.FC = () => {
           <button 
             type="submit" 
             disabled={loading} 
-            className={`w-full py-2 text-white font-semibold rounded-md ${loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} transition duration-200`}
+            className={`w-full py-2 text-white font-semibold rounded-md ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
           >
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? 'Registering...' : 'Sign Up'}
           </button>
-          {!error && formError && <div className="mt-4 text-red-500 text-center">{formError}</div>} 
-          {error && <div className="mt-4 text-red-500 text-center">{error}</div>} 
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+          <div className="text-sm text-center mt-4">
+            Already have an account? <Link to="/login" className="text-blue-600">Login</Link>
+          </div>
         </form>
-        <div className="mt-4 text-center">
-          <span className="text-gray-700">Already have an account? </span>
-          <Link to="/" className="text-blue-500 hover:underline">Sign in</Link>
-        </div>
       </div>
     </div>
   );

@@ -41,15 +41,19 @@ export const getAllUsers = async (req: Request, res: Response): Promise<any> => 
 export const updateUserById = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        const updatedData: Partial<IUser> = req.body; // Use Partial<IUser> to allow for optional fields
+        const updatedData: Partial<IUser> = req.body; 
 
-        // Hash the password if it is being updated
         if (updatedData.password) {
             const salt = await bcrypt.genSalt(10);
             updatedData.password = await bcrypt.hash(updatedData.password, salt);
         }
+        if (updatedData.email) {
+            const existingUser: IUser | null = await User.findOne({ email: updatedData.email, _id: { $ne: id } });
 
-        // Check if files are provided for updating the profile picture
+            if (existingUser) {
+                return res.status(400).json({ message: "User with this email already exists" });
+            }
+        }
         if (req.files) {
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             const avatarLocalPath = files?.profilePic ? files.profilePic[0] : null;

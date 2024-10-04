@@ -8,7 +8,7 @@ export interface User {
   profilePic: string;
 }
 
-interface AuthState {
+export interface AuthState {
   user: User | null; 
   isLoggedIn: boolean;
   loading: boolean;

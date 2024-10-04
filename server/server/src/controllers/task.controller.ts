@@ -17,17 +17,18 @@ export const createTask = async (req: CustomRequest, res: Response): Promise<any
       console.error(error);
       return res.status(500).json({ message: "Failed to create task", error: error.message });
     }
-  };
+};
   
 export const getUserTasks = async (req: CustomRequest, res: Response): Promise<any> => {
     const userId = req.user._id; 
 
+    if(!userId){
+        return res.status(401).json({ message: "token not valid" });
+
+    }
     try {
         const tasks = await Task.find({ userId }).populate("userId");
 
-        if (tasks.length === 0) {
-            return res.status(404).json({ message: "No tasks found for this user." });
-        }
 
         return res.status(200).json(tasks);
     } catch (error: any) {
@@ -47,7 +48,6 @@ export const updateTask = async (req: CustomRequest, res: Response): Promise<any
             return res.status(404).json({ message: "Task not found or not owned by user" });
         }
 
-        // Update fields only if they are provided
         if (updatedData.name !== undefined) {
             task.name = updatedData.name;
         }
@@ -72,8 +72,7 @@ export const deleteTask = async (req: CustomRequest, res: Response): Promise<any
     const userId = req.user._id; 
 
     try {
-        const deletedTask = await Task.findOneAndDelete({ _id: id, userId }); // Ensure only the owner can delete
-
+        const deletedTask = await Task.findOneAndDelete({ _id: id, userId }); 
         if (!deletedTask) {
             return res.status(404).json({ message: "Task not found or not owned by user" });
         }
@@ -100,7 +99,6 @@ export const moveTask = async (req: CustomRequest, res: Response): Promise<any> 
 
         const newStage = direction === 'forward' ? task.stage + 1 : task.stage - 1;
         
-        // Ensure the new stage is valid
         if (newStage < 0 || newStage > 3) {
             return res.status(400).json({ message: "Invalid stage movement" });
         }

@@ -24,7 +24,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
           return res.status(400).json({ message: "Profile picture is required." });
       }
 
-      const avatar = await uploadOnCloudinary(avatarLocalPath.path); // Assuming this function uploads to Cloudinary and returns the URL
+      const avatar = await uploadOnCloudinary(avatarLocalPath.path); 
       const profilePicUrl : string | undefined = avatar?.url
       console.log(profilePicUrl)
       const user: IUser = new User({

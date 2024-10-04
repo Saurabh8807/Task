@@ -36,7 +36,6 @@ export const getUserTasks = async (req: CustomRequest, res: Response): Promise<a
     }
 };
 
-// New updateTask function
 export const updateTask = async (req: CustomRequest, res: Response): Promise<any> => {
     const { id } = req.params; 
     const userId = req.user._id; 

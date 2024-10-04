@@ -48,7 +48,6 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
           secure: true,
       };
 
-      // Store refresh token in the user record
       createdUser.refreshToken = refreshToken;
       await createdUser.save();
 

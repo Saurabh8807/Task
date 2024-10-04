@@ -1,4 +1,3 @@
-// axiosInstance.ts
 import axios from 'axios';
 import Cookies from 'js-cookie'; 
 import store from './redux/store'; 
@@ -37,10 +36,8 @@ axiosInstance.interceptors.response.use(
         console.log("i got response" ,response)
         const newAccessToken = response.data.accessToken;
         console.log("i set new accessToken" ,newAccessToken)
-        // Store the new access token in cookies
         Cookies.set('accessToken', newAccessToken);
 
-        // Optionally, dispatch the user to Redux if needed
         // store.dispatch(setUser({ user: store.getState().auth.user}));
 
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

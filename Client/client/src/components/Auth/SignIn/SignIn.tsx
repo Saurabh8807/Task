@@ -4,7 +4,7 @@ import { setUser, setLoading, setError } from '../../../redux/slices/authSlice';
 import axios from '../../../axios'; 
 import { RootState } from '../../../redux/store'; 
 import { useNavigate, Link } from 'react-router-dom'; 
-import backgroundImage from '../../../assets/bg.jpg'; // Adjust the path as necessary
+import backgroundImage from '../../../assets/bg.jpg'; 
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,12 +26,11 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     dispatch(setLoading(true));
     dispatch(setError(null));
-    setFormError(''); // Clear previous form errors
+    setFormError('');
 
-    // Validate form before making the request
     if (!validateForm()) {
       dispatch(setLoading(false));
-      return; // Exit if validation fails
+      return; 
     }
 
     try {
@@ -39,10 +38,9 @@ const LoginForm: React.FC = () => {
       navigate('./dashboard');
       dispatch(setUser({ user: response.data.user }));
     } catch (err: any) {
-      // Extract the error message from the response
       const errorMessage = err.response?.data?.message || 'An error occurred during login. Please try again.';
       dispatch(setError(errorMessage));
-      setFormError(errorMessage); // Set form error to display below the button
+      setFormError(errorMessage);
     } finally {
       dispatch(setLoading(false));
     }
@@ -51,9 +49,11 @@ const LoginForm: React.FC = () => {
   return (
     <div 
       className="flex items-center justify-center min-h-screen bg-cover bg-center" 
-      style={{ backgroundImage: `url(${backgroundImage})` }} // Use the imported image here
+      style={{ backgroundImage: `url(${backgroundImage})` }} 
     >
       <div className="bg-gray-300 p-8 rounded-lg shadow-lg w-96 opacity-90">
+      <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">Task Management App</h1>
+
         <h2 className="text-2xl font-bold text-center mb-6">Login to Your Account</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

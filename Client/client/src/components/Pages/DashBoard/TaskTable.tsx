@@ -1,4 +1,3 @@
-// TaskTable.tsx
 import React from 'react';
 
 interface Task {
@@ -7,7 +6,7 @@ interface Task {
   stage: number;
   priority: number;
   deadline: string;
-  createdAt: string; // Add createdAt property
+  createdAt: string; 
 }
 
 interface TaskTableProps {

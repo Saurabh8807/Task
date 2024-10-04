@@ -1,4 +1,3 @@
-// Card.tsx
 import React from 'react';
 import { IconType } from 'react-icons';
 
@@ -6,7 +5,7 @@ interface CardProps {
   title: string;
   count: number;
   color: string;
-  Icon: IconType; // The icon will be passed as a React component
+  Icon: IconType; 
 }
 
 const Card: React.FC<CardProps> = ({ title, count, color, Icon }) => {

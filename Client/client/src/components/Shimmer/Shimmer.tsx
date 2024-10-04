@@ -1,20 +1,21 @@
 import React from "react";
-import "./Shimmer.css"; // Make sure this file exists and contains the necessary styles
+import "./Shimmer.css";
 
-const Shimmer: React.FC = () => {
+const TaskShimmer: React.FC = () => {
   return (
-    <div className="shimmer-container">
-      {Array(10)
+    <div className="shimmer-full-page">
+      {Array(4)
         .fill("")
         .map((_, index) => (
-          <div key={index} className="shimmer-card">
-            <div className="shimmer-img" />
-            <div className="shimmer-line shimmer-title" />
-            <div className="shimmer-line shimmer-subtitle" />
+          <div key={index} className="shimmer-box">
+            <div className="shimmer-header" />
+            <div className="shimmer-line shimmer-task-title" />
+            <div className="shimmer-line shimmer-task-details" />
+            <div className="shimmer-line shimmer-task-deadline" />
           </div>
         ))}
     </div>
   );
 };
 
-export default Shimmer;
+export default TaskShimmer;

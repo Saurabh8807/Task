@@ -1,4 +1,3 @@
-// main.tsx
 import React, { lazy, Suspense } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -64,6 +63,14 @@ const appRouter = createBrowserRouter([
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
+          </Suspense>
+        ),
+      },
+      {
+        path: '/shimmer',
+        element: (
+          <Suspense fallback={<Shimmer />}>
+              <Shimmer />
           </Suspense>
         ),
       }

@@ -52,7 +52,6 @@ const ProfilePage: React.FC = () => {
       username: formData.username,
       email: formData.email,
       contact: formData.contact,
-      // You may need to handle file upload separately
     };
 
     try {
@@ -61,12 +60,12 @@ const ProfilePage: React.FC = () => {
       formDataToSend.append('email', updatedProfile.email);
       formDataToSend.append('contact', updatedProfile.contact);
       if (formData.profilePic) {
-        formDataToSend.append('profilePic', formData.profilePic); // Append the file
+        formDataToSend.append('profilePic', formData.profilePic); 
       }
 
       const response = await axios.put(`/user/${user?.id}`, formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Set the correct content type
+          'Content-Type': 'multipart/form-data', 
         },
       });
 

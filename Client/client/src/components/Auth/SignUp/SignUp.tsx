@@ -21,8 +21,8 @@ const SignUp: React.FC = () => {
   });
 
   const [formError, setFormError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // To toggle confirm password visibility
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -42,10 +42,16 @@ const SignUp: React.FC = () => {
 
   const validateForm = () => {
     const { username, email, contact, password, confirmPassword } = formData;
-    if (!username || !email || !contact || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       setFormError('Please fill in all fields.'); 
       return false;
     }
+  const contactRegex = /^\d{10}$/;
+  
+  if (!contactRegex.test(contact)) {
+    setFormError('Contact number must be exactly 10 digits.');
+    return false;
+  }
     if (password !== confirmPassword) {
       setFormError('Passwords do not match.'); 
       return false;
@@ -60,8 +66,8 @@ const SignUp: React.FC = () => {
     dispatch(setError(null)); 
 
     if (!validateForm()) {
-      dispatch(setLoading(false)); // Stop loading if validation fails
-      return; // Exit if validation fails
+      dispatch(setLoading(false)); 
+      return; 
     }
 
     const registrationData = new FormData();
@@ -91,10 +97,10 @@ const SignUp: React.FC = () => {
 
   return (
     <div 
-      className="flex items-center justify-center min-h-screen bg-cover bg-center" 
-      style={{ backgroundImage: `url(${backgroundImage})` }} // Use the imported image here
+      className="flex items-center py-4 justify-center min-h-screen bg-cover bg-center" 
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="bg-gray-300 p-8 rounded-lg shadow-lg w-96 opacity-90">
+      <div className="bg-gray-300 p-8 md:w-1/3 rounded-lg shadow-lg w-96 opacity-90">
         <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">Task Management App</h1>
         <h2 className="text-2xl font-bold text-center mb-6">Create Your Account</h2>
         <form onSubmit={handleSubmit}>
@@ -105,7 +111,7 @@ const SignUp: React.FC = () => {
               value={formData.username} 
               onChange={handleInputChange} 
               placeholder="Username" 
-              required 
+               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -116,7 +122,7 @@ const SignUp: React.FC = () => {
               value={formData.email} 
               onChange={handleInputChange} 
               placeholder="Email" 
-              required 
+               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -127,18 +133,18 @@ const SignUp: React.FC = () => {
               value={formData.contact} 
               onChange={handleInputChange} 
               placeholder="Contact" 
-              required 
+               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="mb-4">
             <input 
-              type={showPassword ? "text" : "password"} // Toggle password visibility
+              type={showPassword ? "text" : "password"}
               name="password" 
               value={formData.password} 
               onChange={handleInputChange} 
               placeholder="Password" 
-              required 
+               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button 
@@ -151,12 +157,12 @@ const SignUp: React.FC = () => {
           </div>
           <div className="mb-4">
             <input 
-              type={showConfirmPassword ? "text" : "password"} // Toggle confirm password visibility
+              type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword" 
               value={formData.confirmPassword} 
               onChange={handleInputChange} 
               placeholder="Confirm Password" 
-              required 
+               
               className="mt-1 p-2 border border-gray-900 bg-white rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button 
@@ -182,8 +188,8 @@ const SignUp: React.FC = () => {
           >
             {loading ? 'Registering...' : 'Register'}
           </button>
-          {!error && formError && <div className="mt-4 text-red-500 text-center">{formError}</div>} {/* Display form validation error */}
-          {error && <div className="mt-4 text-red-500 text-center">{error}</div>} {/* Display API error */}
+          {!error && formError && <div className="mt-4 text-red-500 text-center">{formError}</div>} 
+          {error && <div className="mt-4 text-red-500 text-center">{error}</div>} 
         </form>
         <div className="mt-4 text-center">
           <span className="text-gray-700">Already have an account? </span>

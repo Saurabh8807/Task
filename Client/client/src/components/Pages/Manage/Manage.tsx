@@ -3,9 +3,9 @@ import { FaPlus } from 'react-icons/fa';
 import TaskModal from './TaskModal';
 import TaskStageBox from './TaskStageBox';
 import axios from '../../../axios';
-import { toast, ToastContainer } from 'react-toastify'; // Import Toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
-
+import { toast, ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
+import TaskShimmer from '../../Shimmer/Shimmer';
 interface Task {
   _id: string;
   name: string;
@@ -41,8 +41,8 @@ const Manage: React.FC = () => {
         const response = await axios.put(`/task/${selectedTask._id}`, formData);
         if (response.status === 200) {
           toast.success('Task updated successfully');
-          fetchTasks(); // Refresh tasks after updating
-          toggleModal(); // Close the modal after successful submission
+          fetchTasks();
+          toggleModal(); 
           setSelectedTask(null); 
         }
       } catch (error: any) {
@@ -54,9 +54,9 @@ const Manage: React.FC = () => {
       try {
         const response = await axios.post('/task', { name, priority, deadline });
         if (response.status === 201) {
-          // toast.success('Task created successfully');
-          fetchTasks(); // Refresh tasks after creating a new task
-          toggleModal(); // Close the modal after successful submission
+          toast.success('Task created successfully');
+          fetchTasks();
+          toggleModal(); 
         }
       } catch (error: any) {
         console.error('Error:', error);
@@ -66,13 +66,13 @@ const Manage: React.FC = () => {
   };
 
   const handleEditTask = async (task: Task): Promise<void> => {
-    setSelectedTask(task); // Set the selected task for editing
-    toggleModal(); // Open the modal
+    setSelectedTask(task); 
+    toggleModal();
   };
 
   const handleAddTask = () => {
-    setSelectedTask(null); // Reset selected task for adding a new task
-    toggleModal(); // Open the modal
+    setSelectedTask(null); 
+    toggleModal(); 
   };
 
   const handleDeleteTask = async (id: string) => {
@@ -80,7 +80,7 @@ const Manage: React.FC = () => {
       const response = await axios.delete(`/task/${id}`);
       if (response.status === 200) {
         toast.success('Task deleted successfully');
-        fetchTasks(); // Refresh tasks after deletion
+        fetchTasks();
       }
     } catch (error: any) {
       console.error('Error deleting task:', error);
@@ -93,7 +93,7 @@ const Manage: React.FC = () => {
       const response = await axios.put(`/task/move/${id}/${direction}`);
       if (response.status === 200) {
         toast.success(`Task moved ${direction}`);
-        fetchTasks(); // Refresh tasks after moving
+        fetchTasks();
       }
     } catch (error: any) {
       console.error('Error moving task:', error);
@@ -105,7 +105,6 @@ const Manage: React.FC = () => {
     fetchTasks();
   }, []);
 
-  // Filter tasks by stages
   const backlogTasks = tasks.filter((task) => task.stage === 0);
   const todoTasks = tasks.filter((task) => task.stage === 1);
   const ongoingTasks = tasks.filter((task) => task.stage === 2);
@@ -113,7 +112,7 @@ const Manage: React.FC = () => {
 
   return (
     <div className="bg-white p-8 min-h-screen rounded-lg shadow-md">
-      <ToastContainer /> {/* Add ToastContainer to render toasts */}
+      <ToastContainer /> 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-700">Manage Tasks</h1>
         <button
@@ -129,11 +128,11 @@ const Manage: React.FC = () => {
         isOpen={isModalOpen} 
         onClose={toggleModal} 
         onSubmit={handleTaskSubmit} 
-        task={selectedTask} // Pass the selected task or null
+        task={selectedTask} 
       />
 
       {loading ? (
-        <p className="text-gray-500">Loading tasks...</p>
+        <p className="text-gray-500"><TaskShimmer/></p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           <TaskStageBox

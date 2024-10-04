@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
-// Add a utility function to format the date
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toISOString().split('T')[0]; // Format as "YYYY-MM-DD"
+  return date.toISOString().split('T')[0]; 
 };
 
 interface TaskModalProps {
@@ -16,7 +15,7 @@ interface TaskModalProps {
 
 const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }) => {
   const [name, setName] = useState('');
-  const [priority, setPriority] = useState<number | ''>(''); // Set initial value as ''
+  const [priority, setPriority] = useState<number | ''>('');
   const [deadline, setDeadline] = useState('');
 
   useEffect(() => {
@@ -31,7 +30,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
 
   const resetForm = () => {
     setName('');
-    setPriority(''); // Resetting to empty string
+    setPriority('');
     setDeadline('');
   };
 
@@ -40,8 +39,8 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit, task }
     if (name && priority !== '' && deadline) { 
       onSubmit({ name, priority, deadline });
       toast.success('Task submitted successfully!'); 
-      resetForm(); // Reset form after submission
-      onClose(); // Close modal after submission
+      resetForm();
+      onClose(); 
     } else {
       toast.error('Please fill in all fields.'); 
     }

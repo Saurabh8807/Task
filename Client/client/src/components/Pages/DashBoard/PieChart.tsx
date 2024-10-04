@@ -1,4 +1,3 @@
-// src/components/PieChart.tsx
 
 import React from 'react';
 import { Pie } from 'react-chartjs-2';
@@ -19,7 +18,6 @@ interface PieChartProps {
 }
 
 const PieChart: React.FC<PieChartProps> = ({ chartData }) => {
-  // Optional: Customize the options for the pie chart
   const options = {
     responsive: true,
     plugins: {

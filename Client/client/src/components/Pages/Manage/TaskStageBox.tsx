@@ -17,17 +17,16 @@ interface TaskStageBoxProps {
   onMoveTask: (id: string, direction: 'forward' | 'backward') => Promise<void>;
 }
 
-// Function to get background color based on priority
 const getPriorityColor = (priority: number) => {
   switch (priority) {
     case 0:
-      return 'bg-green-500'; // Low priority
+      return 'bg-green-500';
     case 1:
-      return 'bg-yellow-500'; // Medium priority
+      return 'bg-yellow-500'; 
     case 2:
-      return 'bg-red-500'; // High priority
+      return 'bg-red-500'; 
     default:
-      return 'bg-gray-400'; // Default color
+      return 'bg-gray-400'; 
   }
 };
 

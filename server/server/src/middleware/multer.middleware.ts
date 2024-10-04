@@ -1,8 +1,6 @@
 import multer, { StorageEngine } from 'multer';
 import { Request } from 'express';
-// import { FileFilterCallback } from 'multer';
 
-// Define the storage engine
 const storage: StorageEngine = multer.diskStorage({
   destination: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void): void {
     cb(null, './public/temp'); 
@@ -14,7 +12,6 @@ const storage: StorageEngine = multer.diskStorage({
   }
 });
 
-// Export the multer upload function
 export const upload = multer({ 
   storage
 });

@@ -45,7 +45,7 @@ const Manage: React.FC = () => {
           toggleModal(); 
           setSelectedTask(null); 
         }
-      } catch (error: any) {
+      } catch (error:any) {
         console.error('Error updating task:', error);
         toast.error(error.response?.data?.message || 'Failed to update task');
       }

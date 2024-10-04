@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/store'; 
 import { FaUserEdit } from 'react-icons/fa';
 import axios from '../../../axios'; 
-import { updateUserProfile } from '../../../redux/slices/authSlice'; 
+import { updateUserProfile, User } from '../../../redux/slices/authSlice'; 
 
 const ProfilePage: React.FC = () => {
   const dispatch = useDispatch();
-  const user: any = useSelector((state: RootState) => state.auth.user);
+  const user: User | any  = useSelector((state: RootState) => state.auth.user);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({

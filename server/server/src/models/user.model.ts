@@ -24,12 +24,12 @@ const userSchema = new Schema<IUser>({
     email: {
         type: String,
         required: true,
-        unique: true,
+        // unique: true,
     },
     contact: {
         type: String,
         required: true,
-        unique: true,
+        // unique: true,
     },
     password: {
         type: String,
@@ -50,14 +50,16 @@ userSchema.methods.matchPassword = async function (enteredPassword: string): Pro
 };
 
 userSchema.methods.generateAccessToken = async function (): Promise<string> {
+        console.log(process.env.ACCESS_TOKEN_EXPIRY);
+
     return jwt.sign(
         {
             id: this._id,
-
         },
         process.env.ACCESS_TOKEN_SECRET || '',
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '1h',
+            expiresIn: '2h',
+            // expiresIn:'3s',
         }
     );
 };

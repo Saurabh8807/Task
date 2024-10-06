@@ -19,77 +19,94 @@ const Manage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [formError, setFormError] = useState<string | null>(null); // New state to hold form errors
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+    setFormError(null); 
   };
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('/task/user');
+      const response = await axios.get("/task/user");
       setTasks(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Failed to fetch tasks:', error);
+      console.error("Failed to fetch tasks:", error);
       setLoading(false);
     }
   };
 
-  const handleTaskSubmit = async (formData: { name: string; priority: number; deadline: string }) => {
+  const handleTaskSubmit = async (formData: {
+    name: string;
+    priority: number;
+    deadline: string;
+  }) => {
     if (selectedTask) {
       try {
         const response = await axios.put(`/task/${selectedTask._id}`, formData);
         if (response.status === 200) {
-          toast.success('Task updated successfully');
+          toast.success("Task updated successfully");
           fetchTasks();
-          toggleModal(); 
-          setSelectedTask(null); 
+          setSelectedTask(null);
+          toggleModal();
         }
-      } catch (error:any) {
-        console.error('Error updating task:', error);
-        toast.error(error.response?.data?.message || 'Failed to update task');
+      } catch (error: any) {
+        console.error("Error updating task:", error);
+        toast.error(error.response?.data?.message || "Failed to update task");
+        setFormError(error.response?.data?.message || "Failed to update task"); 
       }
     } else {
       const { name, priority, deadline } = formData;
       try {
-        const response = await axios.post('/task', { name, priority, deadline });
+        const response = await axios.post("/task", {
+          name,
+          priority,
+          deadline,
+        });
+        console.log(response.status)
         if (response.status === 201) {
-          toast.success('Task created successfully');
+          toast.success("Task created successfully");
           fetchTasks();
-          toggleModal(); 
+          toggleModal();
         }
       } catch (error: any) {
-        console.error('Error:', error);
-        toast.error(error.response?.data?.message || 'Failed to create task');
+        console.error("Error:", error);
+        console.error("Error:", error.response?.data?.message);
+        toast.error(error.response?.data?.message || "Failed to create task");
+        setFormError(error.response?.data?.message || "Failed to create task"); 
       }
     }
   };
 
   const handleEditTask = async (task: Task): Promise<void> => {
-    setSelectedTask(task); 
+    setSelectedTask(task);
     toggleModal();
   };
 
   const handleAddTask = () => {
-    setSelectedTask(null); 
-    toggleModal(); 
+    setSelectedTask(null);
+    toggleModal();
   };
 
   const handleDeleteTask = async (id: string) => {
     try {
       const response = await axios.delete(`/task/${id}`);
-      console.log("tasks deleted")
+      console.log("tasks deleted");
       fetchTasks();
       if (response.status === 200) {
-        toast.success('Task deleted successfully');
+        toast.success("Task deleted successfully");
       }
     } catch (error: any) {
-      console.error('Error deleting task:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete task');
+      console.error("Error deleting task:", error);
+      toast.error(error.response?.data?.message || "Failed to delete task");
     }
   };
 
-  const handleMoveTask = async (id: string, direction: 'forward' | 'backward') => {
+  const handleMoveTask = async (
+    id: string,
+    direction: "forward" | "backward"
+  ) => {
     try {
       const response = await axios.put(`/task/move/${id}/${direction}`);
       if (response.status === 200) {
@@ -97,8 +114,10 @@ const Manage: React.FC = () => {
         fetchTasks();
       }
     } catch (error: any) {
-      console.error('Error moving task:', error);
-      toast.error(error.response?.data?.message || `Failed to move task ${direction}`);
+      console.error("Error moving task:", error);
+      toast.error(
+        error.response?.data?.message || `Failed to move task ${direction}`
+      );
     }
   };
 
@@ -113,7 +132,7 @@ const Manage: React.FC = () => {
 
   return (
     <div className="bg-white p-8 min-h-screen rounded-lg shadow-md">
-      <ToastContainer /> 
+      <ToastContainer />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-700">Manage Tasks</h1>
         <button
@@ -125,15 +144,18 @@ const Manage: React.FC = () => {
         </button>
       </div>
 
-      <TaskModal 
-        isOpen={isModalOpen} 
-        onClose={toggleModal} 
-        onSubmit={handleTaskSubmit} 
-        task={selectedTask} 
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={toggleModal}
+        onSubmit={handleTaskSubmit}
+        task={selectedTask}
+        formError={formError} 
       />
 
       {loading ? (
-        <p className="text-gray-500"><TaskShimmer/></p>
+        <p className="text-gray-500">
+          <TaskShimmer />
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           <TaskStageBox

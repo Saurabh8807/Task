@@ -8,7 +8,7 @@ const storage: StorageEngine = multer.diskStorage({
   filename: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void): void {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     console.log(file); 
-    cb(null, `${file.fieldname}-${uniqueSuffix}`); // Set the filename
+    cb(null, `${file.fieldname}-${uniqueSuffix}`); 
   }
 });
 

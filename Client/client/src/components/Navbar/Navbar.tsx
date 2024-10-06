@@ -3,21 +3,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store'; 
 import { clearUser } from '../../redux/slices/authSlice'; 
+import axios from "../../axios";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate(); 
 
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user : any = useSelector((state: RootState) => state.auth.user);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleLogout = () => {
-    dispatch(clearUser()); 
-    navigate('/'); 
+  const handleLogout = async () => {
+    // dispatch(clearUser()); 
+    // navigate('/');
+    
+     try {
+       const response = await axios.post(`/auth/logout`, null, {
+         withCredentials: true, 
+       });
+
+       if (response.status === 200) {
+         dispatch(clearUser()); 
+        //  navigate("/"); 
+       }
+     } catch (error) {
+       console.error("Error logging out:", error);
+     }
   };
 
   return (

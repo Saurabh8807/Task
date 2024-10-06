@@ -5,7 +5,7 @@ import { FaUserEdit } from 'react-icons/fa';
 import axios from '../../../axios'; 
 import { updateUserProfile, User } from '../../../redux/slices/authSlice'; 
 import TaskShimmer from '../../Shimmer/Shimmer'
-
+import backgroundImage from '../../../assets/bg3.jpg';
 const ProfilePage: React.FC = () => {
   const dispatch = useDispatch();
   const user: User | any  = useSelector((state: RootState) => state.auth.user);
@@ -51,6 +51,12 @@ const ProfilePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const contactRegex = /^\d{10}$/;
+    if (!contactRegex.test(formData.contact)) {
+      setErrorMessage("Please enter a valid 10-digit contact number.");
+      return;
+    }
+
     const updatedProfile = {
       username: formData.username,
       email: formData.email,
@@ -95,7 +101,14 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-400 p-6">
+    <div
+      className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "100%",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="bg-white shadow-2xl rounded-lg w-full max-w-xl p-8 relative">
         {/* Profile Picture */}
         <div className="flex justify-center -mt-16">
@@ -128,21 +141,29 @@ const ProfilePage: React.FC = () => {
         {isModalOpen && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">Edit Profile</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
+                Edit Profile
+              </h2>
 
               <form onSubmit={handleSubmit}>
                 {/* Profile Picture Upload */}
                 <div className="flex justify-center mb-4">
                   {formData.profilePic && (
                     <img
-                      src={formData.profilePic}
+                      src={
+                        typeof formData.profilePic === "string"
+                          ? formData.profilePic
+                          : URL.createObjectURL(formData.profilePic)
+                      }
                       alt="Profile Preview"
                       className="w-24 h-24 rounded-full object-cover border-4 border-gray-300"
                     />
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Change Profile Picture</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Change Profile Picture
+                  </label>
                   <input
                     type="file"
                     name="profilePic"
@@ -152,7 +173,9 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Username</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Username
+                  </label>
                   <input
                     type="text"
                     name="username"
@@ -163,7 +186,9 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -174,7 +199,9 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Contact</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Contact
+                  </label>
                   <input
                     type="text"
                     name="contact"
@@ -184,10 +211,10 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
                 {errorMessage && (
-                <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md text-center">
-                  {errorMessage}
-                </div>
-              )}
+                  <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md text-center">
+                    {errorMessage}
+                  </div>
+                )}
                 {/* Submit Button */}
                 <div className="flex justify-center mt-6">
                   <button

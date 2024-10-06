@@ -3,6 +3,7 @@ import User, { IUser } from "../models/user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { uploadOnCloudinary } from "../utils/cloudinary"
+import { CustomRequest } from "../middleware/auth.middleware";
 
 
 export const registerUser = async (req: Request, res: Response): Promise<any> => {
@@ -13,7 +14,9 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
      }
       const existingUser : IUser | null = await User.findOne({ email });
       if (existingUser) {
-          return res.status(400).json({ message: "User with this email already exists" });
+          return res
+            .status(409)
+            .json({ message: "User with this email already exists" });
       }
 
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -40,21 +43,21 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
 
       const createdUser = await user.save();
 
-      const accessToken = await createdUser.generateAccessToken();
-      const refreshToken = await createdUser.generateRefreshToken();
+      // const accessToken = await createdUser.generateAccessToken();
+      // const refreshToken = await createdUser.generateRefreshToken();
 
       const options = {
           httpOnly: true,
           secure: true,
       };
 
-      createdUser.refreshToken = refreshToken;
+      // createdUser.refreshToken = refreshToken;
       await createdUser.save();
 
       return res
           .status(201)
-          .cookie("accessToken", accessToken, options)
-          .cookie("refreshToken", refreshToken, options)    
+          // .cookie("accessToken", accessToken, options)
+          // .cookie("refreshToken", refreshToken, options)    
           .json({ user: { id: createdUser._id, username: createdUser.username, email: createdUser.email, profilePic: profilePicUrl,contact:user.contact }, message: "User registered successfully" });
   } catch (error: any) {
       console.error("Error registering user:", error);
@@ -100,9 +103,10 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
-export const logoutUser = async (req: Request, res: Response): Promise<any> => {
+export const logoutUser = async (req: CustomRequest, res: Response): Promise<any> => {
     try {
-        const userId = req.params.id; 
+        const userId = req.user._id; 
+        console.log(req)
 
         const user: IUser | null  = await User.findById(userId);
         if (!user) {
@@ -148,16 +152,19 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<a
       }
   
       const accessToken = await user.generateAccessToken();
-      const refreshToken = await user.generateRefreshToken();
+      // const refreshToken = await user.generateRefreshToken();
 
       return res
         .status(200)
         .cookie("accessToken", accessToken, { httpOnly: true, secure: true })
-        .cookie("refreshToken", refreshToken, { httpOnly: true, secure: true })
+        .cookie("refreshToken", incomingRefreshToken, {
+          httpOnly: true,
+          secure: true,
+        })
         .json({
           user,
           accessToken,
-          refreshToken,
+          incomingRefreshToken,
           message: "Refresh token successful",
         });
     } catch (error: any) {

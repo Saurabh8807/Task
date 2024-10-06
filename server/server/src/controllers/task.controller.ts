@@ -4,21 +4,24 @@ import { IUser } from "../models/user.model";
 import { CustomRequest } from "../middleware/auth.middleware"; 
 
 export const createTask = async (req: CustomRequest, res: Response): Promise<any> => {
-    const { name, priority,deadline } = req.body;
-    console.log(req)
-    const userId = req.user._id; 
-  
-    try {
-      const newTask: ITask = new Task({ name, stage: 0, userId, priority, deadline }); 
-      await newTask.save();
-  
-      return res.status(201).json({ message: "Task created successfully", task: newTask });
-    } catch (error: any) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to create task", error: error.message });
+  const { name, priority, deadline } = req.body;
+  const userId = req.user._id; 
+
+  try {
+    const existingTask = await Task.findOne({ name, userId });
+    if (existingTask) {
+      return res.status(400).json({ message: "Task with this name already exists." });
     }
+
+    const newTask: ITask = new Task({ name, stage: 0, userId, priority, deadline }); 
+    await newTask.save();
+
+    return res.status(201).json({ message: "Task created successfully", task: newTask });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to create task", error: error.message });
+  }
 };
-  
 export const getUserTasks = async (req: CustomRequest, res: Response): Promise<any> => {
     const userId = req.user._id; 
 
@@ -49,6 +52,13 @@ export const updateTask = async (req: CustomRequest, res: Response): Promise<any
         }
 
         if (updatedData.name !== undefined) {
+const existingTask = await Task.findOne({ name: updatedData.name, userId });
+            if (existingTask) {
+              return res
+                .status(400)
+                .json({ message: "Task with this name already exists." });
+            }
+
             task.name = updatedData.name;
         }
         if (updatedData.priority !== undefined) {

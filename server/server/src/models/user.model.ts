@@ -15,7 +15,6 @@ export interface IUser extends Document {
     generateRefreshToken(): Promise<string>;
 }
 
-// Create the user schema
 const userSchema = new Schema<IUser>({
     username: {
         type: String,
@@ -58,7 +57,7 @@ userSchema.methods.generateAccessToken = async function (): Promise<string> {
         },
         process.env.ACCESS_TOKEN_SECRET || '',
         {
-            expiresIn: '2h',
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2h',
             // expiresIn:'3s',
         }
     );

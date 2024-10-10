@@ -31,7 +31,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             className="px-4 py-2 bg-red-500 text-white rounded"
           >
-            Delete
+            {message?.slice(25,32)}
           </button>
         </div>
       </div>

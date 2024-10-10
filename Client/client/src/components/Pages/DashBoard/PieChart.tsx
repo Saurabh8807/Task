@@ -28,8 +28,8 @@ const PieChart: React.FC<PieChartProps> = ({ chartData }) => {
         callbacks: {
           label: (context: any) => {
             const label = context.label || '';
-            const value = context.raw || 0; // Using context.raw to get the value
-            return `${label}: ${value}`; // Customize tooltip display
+            const value = context.raw || 0; 
+            return `${label}: ${value}`; 
           },
         },
       },

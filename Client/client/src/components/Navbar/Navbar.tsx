@@ -4,9 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store'; 
 import { clearUser } from '../../redux/slices/authSlice'; 
 import axios from "../../axios";
+import ConfirmationModal from "../Modal/ConfirmationModal "; // Import the modal
+
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false); // State for the confirmation modal
   const dispatch = useDispatch();
   const navigate = useNavigate(); 
 
@@ -17,21 +20,27 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    // dispatch(clearUser()); 
-    // navigate('/');
-    
-     try {
-       const response = await axios.post(`/auth/logout`, null, {
-         withCredentials: true, 
-       });
+    try {
+      const response = await axios.post(`/auth/logout`, null, {
+        withCredentials: true, 
+      });
 
-       if (response.status === 200) {
-         dispatch(clearUser()); 
-        //  navigate("/"); 
-       }
-     } catch (error) {
-       console.error("Error logging out:", error);
-     }
+      if (response.status === 200) {
+        dispatch(clearUser()); 
+        navigate("/"); 
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  const handleLogoutClick = () => {
+    setLogoutModalVisible(true); // Show the confirmation modal
+  };
+
+  const handleConfirmLogout = () => {
+    handleLogout(); // Proceed with logout on confirmation
+    setLogoutModalVisible(false); // Close the modal
   };
 
   return (
@@ -49,7 +58,7 @@ const Navbar: React.FC = () => {
             <Link to="/dashboard"  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-lg font-medium transition duration-200">
               Dashboard
             </Link>
-            <Link to="/manage"className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-lg font-medium transition duration-200">
+            <Link to="/manage" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-lg font-medium transition duration-200">
               ManageTask
             </Link>
           </div>
@@ -58,9 +67,8 @@ const Navbar: React.FC = () => {
           <div className="flex items-center md:hidden">
             {user && (
               <Link to="/profile">
-              <img src={user.profilePic} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                <img src={user.profilePic} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
               </Link>
-
             )}
             <button onClick={toggleMenu} className="text-gray-300 hover:text-white focus:outline-none">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,7 +87,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 {/* Logout Button */}
                 <button
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick} // Trigger modal before logout
                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-lg font-medium ml-4 transition duration-200"
                 >
                   Logout
@@ -101,10 +109,9 @@ const Navbar: React.FC = () => {
           </Link>
           {user && (
             <div className="flex items-center text-white">
-
               {/* Logout Button */}
               <button
-                onClick={handleLogout}
+                onClick={handleLogoutClick} // Trigger modal before logout
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-lg font-medium ml-4 transition duration-200"
               >
                 Logout
@@ -113,6 +120,14 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        isVisible={isLogoutModalVisible} // Show modal before logout
+        message="Are you sure you want to logout ?"
+        onConfirm={handleConfirmLogout} // Handle logout on confirmation
+        onCancel={() => setLogoutModalVisible(false)} // Close modal on cancel
+      />
     </nav>
   );
 };

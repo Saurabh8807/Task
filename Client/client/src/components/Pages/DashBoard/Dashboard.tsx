@@ -47,8 +47,17 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     fetchTasks();
   }, []);
-
-  const countTasksByStage = (timeFrame: string) => {
+  
+  const getTodayTasks = () => {
+    const today = new Date().toLocaleDateString();
+  
+    return tasks.filter((task) => {
+      const taskDate = new Date(task.deadline).toLocaleDateString();
+      return taskDate === today;
+    });
+  };
+  
+  const getFilteredTasks = () => {
     const now = new Date();
     let start: Date;
     let end: Date;
@@ -63,9 +72,35 @@ const Dashboard: React.FC = () => {
     } else if (timeFrame === "yearly") {
       start = new Date(now.getFullYear(), 0, 1);
       end = new Date(now.getFullYear() + 1, 0, 0);
-    } else {
-      return { labels: [], data: [] };
     }
+
+    return tasks.filter((task) => {
+      const taskDate = new Date(task.deadline);
+      return taskDate >= start && taskDate <= end;
+    });
+  };
+
+  const countTasksByStage = (timeFrame: string) => {
+    const now = new Date();
+    let start: Date;
+    let end: Date;
+
+    if (timeFrame === "weekly") {
+      const dayOfWeek = now.getDay();
+      console.log(now)
+      console.log(dayOfWeek)
+      start = new Date(now.setDate(now.getDate() - dayOfWeek));
+      console.log(start)
+      end = new Date(now.setDate(start.getDate() + 6));
+      console.log(end)
+
+    } else if (timeFrame === "monthly") {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else if (timeFrame === "yearly") {
+      start = new Date(now.getFullYear(), 0, 1);
+      end = new Date(now.getFullYear() + 1, 0, 0);
+    } 
 
     const filteredTasks = tasks.filter((task) => {
       const taskDate = new Date(task.deadline);
@@ -107,39 +142,29 @@ const Dashboard: React.FC = () => {
     });
   }, [tasks, timeFrame]);
 
-  const getFilteredTasks = () => {
-    const now = new Date();
-    let start: Date;
-    let end: Date;
-
-    if (timeFrame === "weekly") {
-      const dayOfWeek = now.getDay();
-      start = new Date(now.setDate(now.getDate() - dayOfWeek));
-      end = new Date(now.setDate(start.getDate() + 6));
-    } else if (timeFrame === "monthly") {
-      start = new Date(now.getFullYear(), now.getMonth(), 1);
-      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    } else if (timeFrame === "yearly") {
-      start = new Date(now.getFullYear(), 0, 1);
-      end = new Date(now.getFullYear() + 1, 0, 0);
-    }
-
-    return tasks.filter((task) => {
-      const taskDate = new Date(task.deadline);
-      return taskDate >= start && taskDate <= end;
-    });
-  };
 
   if (loading) {
     return <p className="text-center text-gray-600"><TaskShimmer/></p>;
   }
 
+  const completeTask = async (taskId: string) => {
+    try {
+    await axios.put(`/task/${taskId}/complete`);
+      alert("Task completed successfully!");
+  
+      fetchTasks();
+    } catch (error) {
+      console.error("Error completing task:", error);
+      alert("Failed to complete task. Please try again.");
+    }
+  };
+  
   const filteredTasks = getFilteredTasks();
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800">Dashboard</h1>
         <div className="mt-4 md:mt-0">
           <button
             onClick={handleclick}
@@ -182,7 +207,124 @@ const Dashboard: React.FC = () => {
           Icon={FaTasks}
         />
       </div>
-      <div className="mb-6 flex justify-end">
+      <div className="mt-8">
+  <div className="mt-8">
+  <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">Tasks Due Today</h2>
+ {getTodayTasks().length > 0 ? (
+  <div className="overflow-x-auto">
+    <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+      <thead>
+        <tr className="bg-gray-200">
+          <th className="py-3 px-4 border-b text-left">Task Name</th>
+          <th className="py-3 px-4 border-b text-left">Stage</th>
+          <th className="py-3 px-4 border-b text-left">Priority</th>
+          <th className="py-3 px-4 border-b text-left">Deadline</th>
+          <th className="py-3 px-4 border-b text-left">Created At</th>
+          <th className="py-3 px-4 border-b text-left">Actions</th> 
+        </tr>
+      </thead>
+      <tbody>
+        {getTodayTasks()
+          .filter(task => task.stage !== 3) 
+          .map((task) => (
+            <tr
+              key={task._id}
+              className="hover:bg-gray-100 transition-colors duration-200"
+            >
+              <td className="py-2 px-4 border-b">{task.name}</td>
+              <td className="py-2 px-4 border-b">
+                <span
+                  className={`inline-block px-3 py-1 text-white rounded-full text-sm ${
+                    task.stage === 0
+                      ? "bg-blue-500"
+                      : task.stage === 1
+                      ? "bg-yellow-500"
+                      : task.stage === 2
+                      ? "bg-orange-500"
+                      : "bg-green-500"
+                  }`}
+                >
+                  {["Pending", "To Do", "Ongoing", "Done"][task.stage]}
+                </span>
+              </td>
+              <td className="py-2 px-4 border-b">
+                <span
+                  className={`inline-block px-3 py-1 text-white rounded-full text-sm ${
+                    task.priority === 0
+                      ? "bg-green-500"
+                      : task.priority === 1
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                  }`}
+                >
+                  {task.priority === 0 ? "Low" : task.priority === 1 ? "Medium" : "High"}
+                </span>
+              </td>
+              <td className="py-2 px-4 border-b">
+                {new Date(task.deadline).toLocaleDateString()}
+              </td>
+              <td className="py-2 px-4 border-b">
+                {new Date(task.createdAt).toLocaleDateString()}
+              </td>
+              <td className="py-2 px-4 border-b">
+                {task.stage !== 3 && (
+                  <button
+                    onClick={() => completeTask(task._id)}
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition"
+                  >
+                    Complete Task
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+
+        {getTodayTasks()
+          .filter(task => task.stage === 3) 
+          .map((task) => (
+            <tr
+              key={task._id}
+              className="bg-gray-100"
+            >
+              <td className="py-2 px-4 border-b line-through text-gray-400">{task.name}</td>
+              <td className="py-2 px-4 border-b">
+                <span className="inline-block px-3 py-1 bg-green-500 text-white rounded-full text-sm">
+                  Done
+                </span>
+              </td>
+              <td className="py-2 px-4 border-b">
+                <span className="inline-block px-3 py-1 text-white rounded-full text-sm bg-green-500">
+                  {task.priority === 0 ? "Low" : task.priority === 1 ? "Medium" : "High"}
+                </span>
+              </td>
+              <td className="py-2 px-4 border-b">
+                {new Date(task.deadline).toLocaleDateString()}
+              </td>
+              <td className="py-2 px-4 border-b">
+                {new Date(task.createdAt).toLocaleDateString()}
+              </td>
+              <td className="py-2 px-4 border-b">
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-4 py-2 rounded-lg shadow cursor-not-allowed"
+                >
+                  Task Completed
+                </button>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+) : (
+  <p className="text-gray-600 text-center">No tasks are due today.</p>
+)}
+
+</div>
+
+</div>
+
+      <div className="m-6 flex justify-end">
         <select
           value={timeFrame}
           onChange={(e) =>
@@ -202,7 +344,6 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="col-span-2">
-          {/* Task Detail Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
               <thead>

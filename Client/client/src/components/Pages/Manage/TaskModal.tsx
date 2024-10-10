@@ -135,9 +135,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
               onChange={(e) => setPriority(Number(e.target.value))}
             >
               <option value="">Select priority</option>
-              <option value={1}>Low</option>
-              <option value={2}>Medium</option>
-              <option value={3}>High</option>
+              <option value={0}>Low</option>
+              <option value={1}>Medium</option>
+              <option value={2}>High</option>
             </select>
             {priorityError && (
               <p className="text-red-500 text-sm">{priorityError}</p>

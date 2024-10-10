@@ -15,7 +15,6 @@ const SignIn = lazy(() => import('./components/Auth/SignIn/SignIn'));
 const SignUp = lazy(() => import('./components/Auth/SignUp/SignUp'));
 const Profile = lazy(() => import('./components/Pages/Profile/Profile'));
 
-// const Navigate = useNavigate()
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -68,14 +67,6 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
-        path: '/shimmer',
-        element: (
-          <Suspense fallback={<Shimmer />}>
-              <Shimmer />
-          </Suspense>
-        ),
-      },
-      {
         path: '*',
         element: <Navigate to="/" replace />,
       },
@@ -84,9 +75,9 @@ const appRouter = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}> 
       <RouterProvider router={appRouter} />
     </Provider>
-  </StrictMode>
+//  </StrictMode>
 );

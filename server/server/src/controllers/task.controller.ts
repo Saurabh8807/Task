@@ -22,6 +22,7 @@ export const createTask = async (req: CustomRequest, res: Response): Promise<any
     return res.status(500).json({ message: "Failed to create task", error: error.message });
   }
 };
+
 export const getUserTasks = async (req: CustomRequest, res: Response): Promise<any> => {
     const userId = req.user._id; 
 
@@ -52,13 +53,6 @@ export const updateTask = async (req: CustomRequest, res: Response): Promise<any
         }
 
         if (updatedData.name !== undefined) {
-const existingTask = await Task.findOne({ name: updatedData.name, userId });
-            if (existingTask) {
-              return res
-                .status(400)
-                .json({ message: "Task with this name already exists." });
-            }
-
             task.name = updatedData.name;
         }
         if (updatedData.priority !== undefined) {
@@ -91,6 +85,26 @@ export const deleteTask = async (req: CustomRequest, res: Response): Promise<any
     } catch (error: any) {
         console.error(error);
         return res.status(500).json({ message: "Failed to delete task", error: error.message });
+    }
+};
+
+export const completeTask = async (req: CustomRequest, res: Response): Promise<any> => {
+    const { id } = req.params;
+    const userId = req.user._id; 
+
+    try {
+        const task = await Task.findOne({ _id: id, userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or not owned by user" });
+        }
+
+        task.stage = 3; 
+        await task.save();
+
+        return res.status(200).json({ message: "Task completed successfully", task });
+    } catch (error: any) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to complete task", error: error.message });
     }
 };
 

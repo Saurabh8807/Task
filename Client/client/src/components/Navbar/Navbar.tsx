@@ -4,12 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store'; 
 import { clearUser } from '../../redux/slices/authSlice'; 
 import axios from "../../axios";
-import ConfirmationModal from "../Modal/ConfirmationModal "; // Import the modal
+import ConfirmationModal from "../Modal/ConfirmationModal "; 
 
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false); // State for the confirmation modal
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false); 
   const dispatch = useDispatch();
   const navigate = useNavigate(); 
 
@@ -35,12 +35,12 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogoutClick = () => {
-    setLogoutModalVisible(true); // Show the confirmation modal
+    setLogoutModalVisible(true); 
   };
 
   const handleConfirmLogout = () => {
-    handleLogout(); // Proceed with logout on confirmation
-    setLogoutModalVisible(false); // Close the modal
+    handleLogout(); 
+    setLogoutModalVisible(false); 
   };
 
   return (
@@ -85,9 +85,8 @@ const Navbar: React.FC = () => {
                   <img src={user.profilePic} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
                   <span className="font-medium">{user.username}</span>
                 </Link>
-                {/* Logout Button */}
                 <button
-                  onClick={handleLogoutClick} // Trigger modal before logout
+                  onClick={handleLogoutClick}
                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-lg font-medium ml-4 transition duration-200"
                 >
                   Logout
@@ -109,9 +108,8 @@ const Navbar: React.FC = () => {
           </Link>
           {user && (
             <div className="flex items-center text-white">
-              {/* Logout Button */}
               <button
-                onClick={handleLogoutClick} // Trigger modal before logout
+                onClick={handleLogoutClick} 
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-lg font-medium ml-4 transition duration-200"
               >
                 Logout
@@ -121,12 +119,11 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
       <ConfirmationModal
-        isVisible={isLogoutModalVisible} // Show modal before logout
+        isVisible={isLogoutModalVisible} 
         message="Are you sure you want to logout ?"
-        onConfirm={handleConfirmLogout} // Handle logout on confirmation
-        onCancel={() => setLogoutModalVisible(false)} // Close modal on cancel
+        onConfirm={handleConfirmLogout} 
+        onCancel={() => setLogoutModalVisible(false)}
       />
     </nav>
   );

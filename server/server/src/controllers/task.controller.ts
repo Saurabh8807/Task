@@ -51,10 +51,15 @@ export const updateTask = async (req: CustomRequest, res: Response): Promise<any
         if (!task) {
             return res.status(404).json({ message: "Task not found or not owned by user" });
         }
-
-        if (updatedData.name !== undefined) {
+       if (updatedData.name) {
+        const existingTask = await Task.findOne({ name: updatedData.name, userId, _id: { $ne: id } });
+        if (existingTask) {
+            return res.status(400).json({ message: "Task with this name already exists." });
+        }else{
             task.name = updatedData.name;
+
         }
+    }
         if (updatedData.priority !== undefined) {
             task.priority = updatedData.priority;
         }
@@ -111,9 +116,6 @@ export const completeTask = async (req: CustomRequest, res: Response): Promise<a
 export const moveTask = async (req: CustomRequest, res: Response): Promise<any> => {
     const { id, direction } = req.params; 
     const userId = req.user._id; 
-
-    console.log(req.user)
-    console.log(id,direction)
 
     try {
         const task = await Task.findOne({ _id: id, userId }); 

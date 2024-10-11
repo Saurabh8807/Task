@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setLoading, setError } from '../../../redux/slices/authSlice';
+import { setUser } from '../../../redux/slices/authSlice';
 import axios from '../../../axios'; 
 import { RootState } from '../../../redux/store'; 
 import { useNavigate, Link } from 'react-router-dom'; 
@@ -10,8 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
+    const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
@@ -26,12 +27,11 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    dispatch(setError(null));
+    setLoading(true);  
+    setError(null);   
     setFormError('');
 
     if (!validateForm()) {
-      dispatch(setLoading(false));
       return; 
     }
 
@@ -39,19 +39,20 @@ const LoginForm: React.FC = () => {
       const response = await axios.post('/auth/login', { email, password });
       navigate('./dashboard');
       dispatch(setUser({ user: response.data.user }));
-      toast.success("Login successfully"); // This should work now
+      toast.success("Login successfully"); 
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'An error occurred during login. Please try again.';
-      dispatch(setError(errorMessage));
+      setError(errorMessage)
+      toast.error(errorMessage)
       setFormError(errorMessage);
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);  
     }
   };
 
   return (
     <>
-      <ToastContainer /> {/* Include ToastContainer here */}
+      <ToastContainer /> 
       <div 
         className="flex items-center justify-center min-h-screen bg-cover bg-center" 
         style={{ backgroundImage: `url(${backgroundImage})` }} 

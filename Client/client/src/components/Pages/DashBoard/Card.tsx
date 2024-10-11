@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{memo} from 'react';
 import { IconType } from 'react-icons';
 
 interface CardProps {
@@ -20,4 +20,4 @@ const Card: React.FC<CardProps> = ({ title, count, color, Icon }) => {
   );
 };
 
-export default Card;
+export default memo(Card);

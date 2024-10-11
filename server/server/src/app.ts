@@ -4,7 +4,7 @@ import routes from './routes/index.routes';
 import cors from 'cors';
 
 const app: Application = express(); 
-
+console.log(app)
 app.use(cors({
     origin: 'http://localhost:5173', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'], 

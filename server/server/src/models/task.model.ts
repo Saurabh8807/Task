@@ -4,7 +4,7 @@ export interface ITask extends Document {
     name:String;
     stage:number;
     userId:mongoose.Types.ObjectId;
-    priority?:string;
+    priority?:number;
     deadline:Date
 }
 
@@ -12,7 +12,6 @@ const taskSchema: Schema = new Schema({
     name:{
         type:String,
         required:true,
-        unique: true,
     },
     stage: {
         type: Number,

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { FaEdit, FaTrash, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import ConfirmationModal from "../../Modal/ConfirmationModal "; // Import the modal
+import ConfirmationModal from "../../Modal/ConfirmationModal ";  
 
 interface Task {
   _id: string;
@@ -57,7 +57,6 @@ const TaskStageBox: React.FC<TaskStageBoxProps> = ({
       {title}
     </h2>
     
-    {/* Add vertical scrolling with a fixed height */}
     <div className="flex flex-col space-y-3 w-full h-64 overflow-y-auto">
       {sortedTasks.length ? (
         sortedTasks.map((task) => (
@@ -131,4 +130,4 @@ const TaskStageBox: React.FC<TaskStageBoxProps> = ({
   );
 };
 
-export default TaskStageBox;
+export default memo(TaskStageBox);

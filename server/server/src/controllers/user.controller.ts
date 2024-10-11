@@ -9,7 +9,6 @@ import { uploadOnCloudinary } from "../utils/cloudinary"
 export const getUserById = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        console.log(id)
 
         if (!isValidObjectId(id)) {
             return res.status(400).json({ message: "Invalid user ID format" });
@@ -70,7 +69,6 @@ export const updateUserById = async (req: Request, res: Response): Promise<any> 
             updatedData.refreshToken = incomingRefreshToken;
         }
 
-        console.log("updatedData:", updatedData);
         const user: IUser | null = await User.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
 
         if (!user) {

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setLoading, setError } from '../../../redux/slices/authSlice';
+import { setUser } from '../../../redux/slices/authSlice';
 import axios from '../../../axios'; 
 import { RootState } from '../../../redux/store';
 import backgroundImage from '../../../assets/bg.jpg'; 
 import { useNavigate, Link } from 'react-router-dom'; 
-import { toast, ToastContainer } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import { toast, ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
+
 const SignUp: React.FC = () => {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -31,7 +31,9 @@ const SignUp: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
+  const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -47,7 +49,7 @@ const SignUp: React.FC = () => {
         ...formData,
         profilePic: e.target.files[0],
       });
-      setImagePreview(URL.createObjectURL(e.target.files[0])); // Set image preview
+      setImagePreview(URL.createObjectURL(e.target.files[0])); 
     }
   };
 
@@ -62,7 +64,6 @@ const SignUp: React.FC = () => {
     };
     let isValid = true;
 
-    // Username validation (only letters and numbers, no special characters)
     const usernameRegex = /^[a-zA-Z0-9]+$/;
     if (!username) {
       errors.username = "Username is required.";
@@ -72,7 +73,6 @@ const SignUp: React.FC = () => {
       isValid = false;
     }
 
-    // Email validation (simple pattern check)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       errors.email = "Email is required.";
@@ -82,7 +82,6 @@ const SignUp: React.FC = () => {
       isValid = false;
     }
 
-    // Contact validation (exactly 10 digits)
     const contactRegex = /^\d{10}$/;
     if (!contact) {
       errors.contact = "Contact number is required.";
@@ -92,7 +91,6 @@ const SignUp: React.FC = () => {
       isValid = false;
     }
 
-    // Password validation (password and confirm password must match)
     if (!password) {
       errors.password = "Password is required.";
       isValid = false;
@@ -115,11 +113,12 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    dispatch(setError(null));
+    setLoading(true);  
+    setError(null);    
 
     if (!validateForm()) {
-      dispatch(setLoading(false));
+      setLoading(false);
+
       return;
     }
 
@@ -143,11 +142,14 @@ const SignUp: React.FC = () => {
         navigate("../");
       }
     } catch (err: any) {
+      setLoading(false);  
+
       const errorMessage =
         err.response?.data?.message || "An error occurred during registration.";
-      dispatch(setError(errorMessage));
+        setError(errorMessage)
+        toast.error(errorMessage)
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false); 
     }
   };
 
@@ -156,7 +158,7 @@ const SignUp: React.FC = () => {
       className="flex items-center py-4 justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <ToastContainer /> {/* Add ToastContainer here */}
+      <ToastContainer /> 
       <div className="bg-gray-300 p-8 md:w-1/3 rounded-lg shadow-lg w-96 opacity-90">
         <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">
           Task Management App
@@ -256,6 +258,7 @@ const SignUp: React.FC = () => {
 
           <div className="mb-3">
             <input
+            accept='image/*'
               type="file"
               name="profilePic"
               onChange={handleFileChange}

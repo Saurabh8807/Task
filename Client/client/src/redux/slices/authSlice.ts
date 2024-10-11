@@ -11,15 +11,11 @@ export interface User {
 export interface AuthState {
   user: User | null; 
   isLoggedIn: boolean;
-  loading: boolean;
-  error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
   isLoggedIn: false,
-  loading: false,
-  error: null,
 };
 
 const authSlice = createSlice({
@@ -34,22 +30,12 @@ const authSlice = createSlice({
       state.user = null;
       state.isLoggedIn = false;
     },
-    setLoading(state, action: PayloadAction<boolean>) {
-      state.loading = action.payload;
-    },
-    setError(state, action: PayloadAction<string | null>) {
-      state.error = action.payload;
-    },
-    clearError(state) {
-      state.error = null;
-    },
-    
     updateUserProfile(state, action: PayloadAction<User>) {
       state.user = action.payload; 
     },
   },
 });
 
-export const { setUser, clearUser, setLoading, setError, clearError, updateUserProfile } = authSlice.actions;
+export const { setUser, clearUser, updateUserProfile } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface Task {
   _id: string;
@@ -48,4 +48,4 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks }) => {
   );
 };
 
-export default TaskTable;
+export default memo(TaskTable);

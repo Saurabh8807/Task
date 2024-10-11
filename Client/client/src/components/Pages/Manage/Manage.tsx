@@ -19,7 +19,7 @@ const Manage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [formError, setFormError] = useState<string | null>(null); // New state to hold form errors
+  const [formError, setFormError] = useState<string | null>(null); 
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);

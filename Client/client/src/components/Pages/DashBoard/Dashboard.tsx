@@ -10,6 +10,8 @@ import {
 import Card from "./Card"; 
 import PieChart from "./PieChart"; 
 import TaskShimmer from "../../Shimmer/Shimmer";
+import DateRangeFilter from "./DateRangeFilter"; 
+
 
 interface Task {
   _id: string;
@@ -48,16 +50,7 @@ const Dashboard: React.FC = () => {
     fetchTasks();
   }, []);
   
-  const getTodayTasks = () => {
-    const today = new Date().toLocaleDateString();
-  
-    return tasks.filter((task) => {
-      const taskDate = new Date(task.deadline).toLocaleDateString();
-      return taskDate === today;
-    });
-  };
-  
-  const getFilteredTasks = () => {
+  const filter=()=>{
     const now = new Date();
     let start: Date;
     let end: Date;
@@ -78,34 +71,20 @@ const Dashboard: React.FC = () => {
       const taskDate = new Date(task.deadline);
       return taskDate >= start && taskDate <= end;
     });
+  }
+  
+  const getTodayTasks = () => {
+    const today = new Date().toLocaleDateString();
+  
+    return tasks.filter((task) => {
+      const taskDate = new Date(task.deadline).toLocaleDateString();
+      return taskDate === today;
+    });
   };
 
-  const countTasksByStage = (timeFrame: string) => {
-    const now = new Date();
-    let start: Date;
-    let end: Date;
 
-    if (timeFrame === "weekly") {
-      const dayOfWeek = now.getDay();
-      console.log(now)
-      console.log(dayOfWeek)
-      start = new Date(now.setDate(now.getDate() - dayOfWeek));
-      console.log(start)
-      end = new Date(now.setDate(start.getDate() + 6));
-      console.log(end)
-
-    } else if (timeFrame === "monthly") {
-      start = new Date(now.getFullYear(), now.getMonth(), 1);
-      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    } else if (timeFrame === "yearly") {
-      start = new Date(now.getFullYear(), 0, 1);
-      end = new Date(now.getFullYear() + 1, 0, 0);
-    } 
-
-    const filteredTasks = tasks.filter((task) => {
-      const taskDate = new Date(task.deadline);
-      return taskDate >= start && taskDate <= end;
-    });
+  const countTasksByStage = () => {
+    const filteredTasks = filter()
 
     const doneTasks = filteredTasks.filter((task) => task.stage === 3).length;
     const pendingTasks = filteredTasks.filter(
@@ -123,7 +102,7 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const { labels, data } = countTasksByStage(timeFrame);
+    const { labels, data } = countTasksByStage();
     setChartData({
       labels,
       datasets: [
@@ -146,6 +125,8 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return <p className="text-center text-gray-600"><TaskShimmer/></p>;
   }
+  const statusLabels = ["Pending", "To Do", "Ongoing", "Done"];
+  const cardColors = ["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-gray-500"];
 
   const completeTask = async (taskId: string) => {
     try {
@@ -159,7 +140,7 @@ const Dashboard: React.FC = () => {
     }
   };
   
-  const filteredTasks = getFilteredTasks();
+  const filteredTasks = filter();
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
@@ -176,37 +157,22 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-        <Card
-          title="Pending Tasks"
-          count={tasks.filter((task) => task.stage === 0).length}
-          color="bg-blue-500 text-white"
-          Icon={FaClipboardList}
-        />
-        <Card
-          title="To Do Tasks"
-          count={tasks.filter((task) => task.stage === 1).length}
-          color="bg-green-500 text-white"
-          Icon={FaTasks}
-        />
-        <Card
-          title="Ongoing Tasks"
-          count={tasks.filter((task) => task.stage === 2).length}
-          color="bg-yellow-500 text-white"
-          Icon={FaPlay}
-        />
-        <Card
-          title="Done Tasks"
-          count={tasks.filter((task) => task.stage === 3).length}
-          color="bg-gray-500 text-white"
-          Icon={FaCheckCircle}
-        />
-        <Card
-          title="Total Tasks"
-          count={tasks.length}
-          color="bg-purple-500 text-white"
-          Icon={FaTasks}
-        />
-      </div>
+  {statusLabels.map((label, index) => (
+    <Card
+      key={index}
+      title={`${label} Tasks`}
+      count={tasks.filter((task) => task.stage === index).length}
+      color={`${cardColors[index]} text-white`}
+      Icon={index === 0 ? FaClipboardList : index === 1 ? FaTasks : index === 2 ? FaPlay : FaCheckCircle}
+    />
+  ))}
+  <Card
+    title="Total Tasks"
+    count={tasks.length}
+    color="bg-purple-500 text-white"
+    Icon={FaTasks}
+  />
+</div>
       <div className="mt-8">
   <div className="mt-8">
   <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">Tasks Due Today</h2>
@@ -244,8 +210,8 @@ const Dashboard: React.FC = () => {
                       : "bg-green-500"
                   }`}
                 >
-                  {["Pending", "To Do", "Ongoing", "Done"][task.stage]}
-                </span>
+            {statusLabels[task.stage]}
+            </span>
               </td>
               <td className="py-2 px-4 border-b">
                 <span
@@ -323,6 +289,8 @@ const Dashboard: React.FC = () => {
 </div>
 
 </div>
+<DateRangeFilter tasks={tasks} />
+
 
       <div className="m-6 flex justify-end">
         <select

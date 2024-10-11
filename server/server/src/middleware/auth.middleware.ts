@@ -26,7 +26,7 @@ const verifyJwt = async (req: CustomRequest, res: Response, next: NextFunction):
 
     req.user = user; 
     console.log("verify jwt passed")
-    next();
+    // next();
   } catch (error: any) {
     if (error instanceof jwt.JsonWebTokenError) {
       res.status(401).json({ message: "Invalid or expired token" });

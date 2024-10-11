@@ -29,7 +29,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
 
       const avatar = await uploadOnCloudinary(avatarLocalPath.path); 
       const profilePicUrl : string | undefined = avatar?.url
-      console.log(profilePicUrl)
+      // console.log(profilePicUrl)
       const user: IUser = new User({
           username,
           email,
@@ -68,7 +68,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password } = req.body;
-        console.log(email)
+        // console.log(email)
 
         const user: IUser | null = await User.findOne({ email });
         if (!user) {
@@ -106,7 +106,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 export const logoutUser = async (req: CustomRequest, res: Response): Promise<any> => {
     try {
         const userId = req.user._id; 
-        console.log(req)
+        // console.log(req)
 
         const user: IUser | null  = await User.findById(userId);
         if (!user) {
